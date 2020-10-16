@@ -60,6 +60,7 @@ Obs.: todos os testes realizados em ambiente Linux. Consigo fazer o setup e buil
 
 ### Primeiros passos
 
+
 **Preparando a AWS**
 - Ainda não tem terraform, mas vai ter =)
 - Por hora crie um bucket e batize-o como desejar
@@ -74,6 +75,7 @@ Obs.: todos os testes realizados em ambiente Linux. Consigo fazer o setup e buil
     - Tempo de execução de 2 min (isso pode variar com seu uso, é só uma sugestão)
 - Faça o upload do arquivo "template.w3swm" para a pasta "/tests" que foi criada previamente no novo bucket
 
+
 **Preparando o pacote**
 - Clone o repositório localmente
 - Defina o nome do bucket no arquivo "docker-compose.yml"
@@ -82,6 +84,7 @@ Obs.: todos os testes realizados em ambiente Linux. Consigo fazer o setup e buil
 $ make clean fetch-dependencies
 $ sudo make docker-build
 ```
+
 
 **Trabalhando local (docker)**
 - É preciso antes definir as chaves do docker-compose, via arquivo aws credentials e etc. Se voce estiver sem muita paciencia, dá pra mudar o makefile (linha 35) de modo que ele fica igual o modelo abaixo (meio go-horse, mas funciona), mandando variável de ambiente pro docker-compose:
@@ -96,7 +99,11 @@ $ sudo make docker-build
 -Se estiver tudo bem, verifique em seu bucket na pasta "/results" e "/screenshots" se foi carregada a página abaixo com sucesso!
 
 Gerando o pacote AWS Lambda:
-    - `make build-lambda-package` gera o arquivo "build.zip", que voce deverá subir para um bucket de sua preferencia e referenciar como código fonte em seu lambda
+- O comando abaixo gera o arquivo "build.zip", que voce deverá subir para um bucket de sua preferencia e referenciar como código fonte em seu lambda
+    ```sh
+    - `make build-lambda-package` 
+    ```
+  
 
 **Executando o lambda**
 - Defina as variáveis de ambiente para o lambda conforme já definidas previamente no "docket-compose.yml"
@@ -106,4 +113,4 @@ Gerando o pacote AWS Lambda:
     "test_to_run": "meu-teste.w3swm"
 }
 ```
--Se estiver tudo bem, verifique em seu bucket na pasta "/results" e "/screenshots" se foi carregada a página abaixo com sucesso!
+- Se estiver tudo bem, verifique em seu bucket na pasta "/results" e "/screenshots" se foi carregada a página abaixo com sucesso!
