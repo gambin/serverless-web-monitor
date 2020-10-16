@@ -1,0 +1,7 @@
+Acessar "https://google.com"
+Preencher "input[name='q']" com "github gambin"
+Pressionar "ENTER"
+Clicar ".rc a"
+Clicar "a[href*='repositories']"
+Clicar "a[href*='serverless-web-monitor']"
+Preencher ".header-search-input" com "Thanks for your visit!"

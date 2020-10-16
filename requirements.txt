@@ -1,0 +1,4 @@
+selenium==3.14.1
+chromedriver-binary==2.42
+boto3
+logger

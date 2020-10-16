@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  lambda:
+    build: .
+    environment:
+      - PYTHONPATH=/var/task/src:/var/task/lib
+      - PATH=/var/task/bin
+      - BUCKET=monitoracao-w3do
+      - TIME_WAIT=10
+      - TIME_SLEEP=3
+    volumes:
+      - ./src/:/var/task/src/
