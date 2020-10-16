@@ -101,7 +101,7 @@ $ sudo make docker-run
 Gerando o pacote AWS Lambda:
 - O comando abaixo gera o arquivo "build.zip", que voce deverá subir para um bucket de sua preferencia e referenciar como código fonte em seu lambda
 ```sh
-make build-lambda-package
+$ make build-lambda-package
 ```
   
 
