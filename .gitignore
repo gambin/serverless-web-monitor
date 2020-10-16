@@ -130,3 +130,7 @@ dmypy.json
 
 #Pycharm
 .idea/
+
+#Proj
+bin/
+build.zip
