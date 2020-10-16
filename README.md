@@ -71,7 +71,7 @@ Obs.: todos os testes realizados em ambiente Linux. Consigo fazer o setup e buil
 - Crie um novo lambda, contemplando:
     - Policy de leitura e escrita no S3
     - Runtime python 3.6
-    - RAM 500Mb (isso pode variar com seu uso, é só uma sugestão)
+    - RAM 1024Mb (isso pode variar com seu uso, é só uma sugestão)
     - Tempo de execução de 2 min (isso pode variar com seu uso, é só uma sugestão)
 - Faça o upload do arquivo "template.w3swm" para a pasta "/tests" que foi criada previamente no novo bucket
 
