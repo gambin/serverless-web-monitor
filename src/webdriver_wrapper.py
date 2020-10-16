@@ -293,12 +293,11 @@ class WebDriverWrapper:
             with open(result_file_path, "w") as json_file:
                 json.dump(json_result_data, json_file)
 
-            if all (k in os.environ for k in ("BUCKET")):
-                # uploading screenshot and test result
-                s3.upload_file(screenshot_file_path, os.environ["BUCKET"], "screenshots/{}".format(screenshot_file_name))
-                s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}".format(result_file_name))
-                s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}.w3swm-last.json".format(result_file_name.split(".w3swm")[0],))
-                self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to {}".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
-        
+            # uploading screenshot and test result
+            s3.upload_file(screenshot_file_path, os.environ["BUCKET"], "screenshots/{}".format(screenshot_file_name))
+            s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}".format(result_file_name))
+            s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}.w3swm-last.json".format(result_file_name.split(".w3swm")[0],))
+            self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to {}".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
+    
             ## done task
             self._driver.close()
