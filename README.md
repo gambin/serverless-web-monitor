@@ -78,8 +78,10 @@ Preparando o pacote:
     - Clone o repositório localmente
     - Defina o nome do bucket no arquivo "docker-compose.yml"
     - Execute os comandos nessa ordem:
-        `make clean fetch-dependencies` limpa qualquer possível sujeira e baixa as dependencias
-        `sudo make docker-build` ja prepara sua imagem docker, quase lá
+    ```sh
+    $ make clean fetch-dependencies
+    $ sudo make docker-build
+    ```
 
 Trabalhando local (docker)
     - É preciso antes definir as chaves do docker-compose, via arquivo aws credentials e etc. Se voce estiver sem muita paciencia, dá pra mudar o makefile (linha 35) de modo que ele fica igual o modelo abaixo (meio go-horse, mas funciona), mandando variável de ambiente pro docker-compose:
@@ -95,7 +97,7 @@ Gerando o pacote AWS Lambda:
 Executando o lambda:
     - Defina as variáveis de ambiente para o lambda conforme já definidas previamente no "docket-compose.yml"
     - Crie um novo evento de teste, e informe o argumento conforme modelo abaixo:
-
     {
         "test_to_run": "meu-teste.w3swm"
     }
+    -Se estiver tudo bem, verifique em seu bucket na pasta "/results" e "/screenshots" se foi carregada a página abaixo com sucesso!
