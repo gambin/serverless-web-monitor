@@ -88,21 +88,21 @@ $ sudo make docker-build
 
 **Trabalhando local (docker)**
 - É preciso antes definir as chaves do docker-compose, via arquivo aws credentials e etc. Se voce estiver sem muita paciencia, dá pra mudar o makefile (linha 35) de modo que ele fica igual o modelo abaixo (meio go-horse, mas funciona), mandando variável de ambiente pro docker-compose:
-    ```sh
-    docker-compose run -e AWS_ACCESS_KEY_ID=<AQUI-VAI-MINHA-KEY> -e AWS_SECRET_ACCESS_KEY=<AQUI-VAI-MEU-SECRET> lambda src.lambda_function.lambda_handler`
-    ```
+```sh
+docker-compose run -e AWS_ACCESS_KEY_ID=<AQUI-VAI-MINHA-KEY> -e AWS_SECRET_ACCESS_KEY=<AQUI-VAI-MEU-SECRET> lambda src.lambda_function.lambda_handler`
+```
 - Obviamente que voce não precisa disso no contexto do lambda.
 - Para executar no seu docker
-    ```sh
-    $ sudo make docker-run`
-    ```
+```sh
+$ sudo make docker-run`
+```
 -Se estiver tudo bem, verifique em seu bucket na pasta "/results" e "/screenshots" se foi carregada a página abaixo com sucesso!
 
 Gerando o pacote AWS Lambda:
 - O comando abaixo gera o arquivo "build.zip", que voce deverá subir para um bucket de sua preferencia e referenciar como código fonte em seu lambda
-    ```sh
-    - `make build-lambda-package` 
-    ```
+```sh
+- `make build-lambda-package` 
+```
   
 
 **Executando o lambda**
