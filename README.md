@@ -30,7 +30,7 @@ A solução basicamente compreende o seguinte cenário:
 - Fazer com que este lambda leia um roteiro (arquivo texto mesmo) como se fosse um roteiro de teste. Ex.:
 ```sh
     Acessar "https://www.meusite.com.br"
-    Preencher "#seletor-input"** com "valor do campo"
+    Preencher "#seletor-input" com "valor do campo"
     Clicar ".seletor-botao"
 ````
 - Se ele chegar até a última etapa sem qualquer tipo de exception, sucesso! Grava resultado, html output e screenshot em um bucket no S3
@@ -46,6 +46,19 @@ A solução basicamente compreende o seguinte cenário:
 - Criação de roteiros baseados em arquivos texto (com extensão exótica), sem necessidade de novos deployments ou alteração de fonte;
 - Não há necessidade de conhecimento técnico para criação de novos roteiros (apenas de seletor CSS, seu browser ajuda vai);
 - Se você não pretende usar um cenário on-premises já disponível, é um forte candidato a solução com menor custo possível para o que se propõe;
+
+### Screenshots
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/s3_folders.png)
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/code-roteiro.png)
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/screenshot_lambda.png)
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/screenshot_02.png)
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/template.w3swm.2020-10-16_22-36-55.png)
+
 
 
 ### Requisitos
