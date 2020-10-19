@@ -11,7 +11,7 @@ Que por sua vez é uma implementação de https://github.com/adieuadieu/serverle
 Ou seja - ninguém inventou a roda por aqui.
 
 
-Acontece que qualquer implementação de testes com selenium é um pouco chata na definição de versão de drivers (chromedriver que o diga), browser (chrome que o diga), selenium driver, plataforma, timeouts/ timewaits/ timesleeps, e todo aquele universo que a gente já sabe. E para quem usa muito esporadicamente (não tem ninguém de QA e afins por aqui), criar um teste do 0 ou ficar reciclando testes existentes é um pouco chato.
+Acontece que qualquer implementação de roteiros de teste com selenium é um pouco chato na definição de versão de drivers (chromedriver que o diga), browser (chrome/ chromium que o diga), selenium driver, plataforma, timeouts/ timewaits/ timesleeps, e todo aquele universo que a gente já sabe. E para quem usa muito esporadicamente (não tem ninguém de QA e afins por aqui), criar um do zero ou ficar reciclando roteiros de testes existentes é um pouco chato.
 
 Para acabar (ou minimizar) essa dor de cabeça com uma possibilidade de automação + redução de custos top (serverless, my friend), criei esse carinha aqui.
 
@@ -26,14 +26,15 @@ Neste contexto criei um código específico para um ambiente que deveria rodar n
 
 A solução basicamente compreende o seguinte cenário:
 
-- Implementar um lambda na AWS que execute testes agendados ou por demanda (crontab/ api gateway request/ manual/ whatever);
+- Implementar um lambda na AWS que execute roteiros de testes agendados ou por demanda (crontab/ api gateway request/ manual/ whatever);
 - Fazer com que este lambda leia um roteiro (arquivo texto mesmo) como se fosse um roteiro de teste. Ex.:
-    - Acessar **"https://www.meusite.com.br"**
-    - Preencher **"#seletor-input"** com **"valor do campo"**
-    - Clicar **".seletor-botao"**
-- Se ele chegar até a última etapa sem qualquer tipo de exception, sucesso!
-- Se der qualquer exception, registra num log file formato JSON no S3, assim como print que evidencia o erro;
-- Em caso de sucesso, loga resultado, html output e print de tela no S3
+```sh
+    Acessar "https://www.meusite.com.br"
+    Preencher "#seletor-input"** com "valor do campo"
+    Clicar ".seletor-botao"
+````
+- Se ele chegar até a última etapa sem qualquer tipo de exception, sucesso! Grava resultado, html output e screenshot em um bucket no S3
+- Se der qualquer exception, registra num log file formato JSON no S3, assim como screenshot que evidencia o erro;
 > **Resumo:** É um pseudo Cucumber/ Pingdom (transaction test) alike
 
 
@@ -42,9 +43,9 @@ A solução basicamente compreende o seguinte cenário:
 - Fácil implementação;
 - Reutilização de código para diferentes roteiros, através de um único lamda/ docker;
 - Captura de screenshot, html output, gravação de resultado do roteiro em formato JSON (sim, já foi pensado para a criação de uma API de consulta!);
-- Criação de roteiros baseados em arquivos texto (com extensão exótica), não necessitando de novos deployments;
-- Não há necessidade de conhecimento técnico para criação de novos testes (apenas de seletor CSS, seu browser ajuda vai);
-- Se você não pretende usar um cenário on-premises, é um forte candidato a solução com menor custo possível para o que se propõe;
+- Criação de roteiros baseados em arquivos texto (com extensão exótica), sem necessidade de novos deployments ou alteração de fonte;
+- Não há necessidade de conhecimento técnico para criação de novos roteiros (apenas de seletor CSS, seu browser ajuda vai);
+- Se você não pretende usar um cenário on-premises já disponível, é um forte candidato a solução com menor custo possível para o que se propõe;
 
 
 ### Requisitos
@@ -64,14 +65,14 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 * [Chromium binary](https://github.com/adieuadieu/serverless-chrome/releases)
 
 
-> **Obs.:** todos os testes realizados em ambiente Linux. Consigo fazer o setup e build no Windows/ WSL? Provável, mas o tio aqui não teve saco pra testar ainda.
+> **Obs.:** toda a implementação foi realizada em ambiente Linux. Consigo fazer o setup e build no Windows/ WSL? Provável, mas o tio aqui não teve saco e tempo pra testar ainda.
 
 
 ### Primeiros passos
 
 
 **Preparando a AWS**
-- Ainda não tem terraform, mas vai ter =)
+>**Ainda não tem terraform**, mas vai ter =)
 - Por hora crie um bucket e batize-o como desejar
 - Neste bucket crie a seguinte estrutura de pastas:
     - **/tests**
@@ -80,7 +81,7 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 - Crie um novo lambda, contemplando:
     - Policy de leitura e escrita no S3
     - Runtime Python 3.6
-    - RAM 1024Mb (isso pode variar com seu uso, é só uma sugestão)
+    - RAM 1500Mb (recomendado, lembre-se que estamos usando um Chrome)
     - Tempo de execução de 2 min (isso pode variar com seu uso, é só uma sugestão)
 - Faça o upload do arquivo **"template.w3swm"** para a pasta **"/tests"** que foi criada previamente no novo bucket
 
@@ -107,7 +108,7 @@ $ sudo make docker-run
 ```
 > **Se estiver tudo bem** verifique em seu bucket na pasta **"/results"** e **"/screenshots"** se foi carregada a página abaixo com sucesso!
 
-Gerando o pacote AWS Lambda:
+**Gerando o pacote AWS Lambda:**
 - O comando abaixo gera o arquivo **"build.zip"**, que você deverá subir para um bucket de sua preferencia e referenciar como código fonte em seu lambda
 ```sh
 $ make build-lambda-package
