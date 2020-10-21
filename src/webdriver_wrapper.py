@@ -15,6 +15,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
+import sys
 
 class WebDriverWrapper:
 
@@ -122,55 +123,65 @@ class WebDriverWrapper:
 
 
     def set_text_input(self, selector, value_setter, to_avoid=None, ts=0):
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        
-        element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
-        
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        
-        if element.is_enabled():
-            element.clear()
-        
-        if ts != 0:
-            time.sleep(int(ts))
+        try:
             if to_avoid is not None:
                 self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            
             element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
-        
-        if len(element.get_attribute('value')) == 0:
-            element.send_keys(value_setter)
+            
+            if to_avoid is not None:
+                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            
+            if element.is_enabled():
+                element.clear()
+            
+            if ts != 0:
+                time.sleep(int(ts))
+                if to_avoid is not None:
+                    self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+                element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
+            
+            if len(element.get_attribute('value')) == 0:
+                element.send_keys(value_setter)
+        except:
+            raise
 
     
     def button_click(self, selector, to_avoid=None):
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
-        element = self._wait.until(ExpectedConditions.element_to_be_clickable((By.CSS_SELECTOR, selector)))
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        element.click()
+        try:
+            if to_avoid is not None:
+                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
+            element = self._wait.until(ExpectedConditions.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            if to_avoid is not None:
+                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            element.click()
+        except: 
+            raise
 
 
     def set_drop_down(self, selector, value_setter, to_avoid=None):
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        element = Select(self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector))))
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        element.select_by_visible_text(value_setter)
-
+        try:
+            if to_avoid is not None:
+                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            element = Select(self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector))))
+            if to_avoid is not None:
+                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            element.select_by_visible_text(value_setter)
+        except: 
+            raise
 
     def key_press(self, value_setter, to_avoid=None):
-        if to_avoid is not None:
-            self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-        element = self._driver.switch_to.active_element
-        if value_setter == 'RETURN' or value_setter == 'ENTER':
-            element.send_keys(Keys.RETURN)
-        elif value_setter == 'TAB':
-            element.send_keys(Keys.TAB)
-
+        try:
+            if to_avoid is not None:
+                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+            element = self._driver.switch_to.active_element
+            if value_setter == 'RETURN' or value_setter == 'ENTER':
+                element.send_keys(Keys.RETURN)
+            elif value_setter == 'TAB':
+                element.send_keys(Keys.TAB)
+        except: 
+            raise
     
     def test_runner(self, test_to_run):       
  
@@ -180,6 +191,7 @@ class WebDriverWrapper:
         screenshot_file_name = '{}.png'.format(test_to_run.split("/")[3])
         result_file_path = '{}.json'.format(test_to_run)
         result_file_name = '{}.json'.format(test_to_run.split("/")[3])
+        ex = None
 
         try:
 
@@ -267,23 +279,27 @@ class WebDriverWrapper:
             # job done!
             self._logger.info("Well done!")
 
-        except Exception as ex:
+        except Exception as e:
             # defining exception output
+
             json_result_data.append({
                 "status": 422,
                 "filename": "Screenshot: {}. ".format(screenshot_file_name),
-                "description": str(ex),
-                "ouotput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML")
+                "exception": getattr(e, 'message', repr(e)),
+                "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML")
             })
 
             self._logger.error("### An exception has ocurred!")
-            self._logger.error("Ex.: " + str(ex))
+            self._logger.error("Exception: " + str(e))
 
             # getting the chrome output logs
             with open(self._tmp_folder + "/chromedriver.log", "r") as logfile:
                 log_data = logfile.readlines()
                 self._logger.info("### Chrome error logs")
                 self._logger.info(log_data)
+
+            # setting error exception
+            ex = e
 
         finally:
             # generating screenshots locally
@@ -301,3 +317,8 @@ class WebDriverWrapper:
     
             ## done task
             self._driver.close()
+
+            # if error, raise exception on lambda execution
+            if (ex):
+                raise ex
+            
