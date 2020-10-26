@@ -3,15 +3,23 @@ import logging
 import boto3
 import botocore
 import sys
+import time
+
 from enum import Enum 
 from src.errors import Errors
-import time
+from selenium.webdriver.support import expected_conditions as ExpectedConditions
+from selenium.webdriver.common.by import By
 
 class W3Utils:
 
     def __init__(self):
         self._logger = logging.getLogger()
-        
+
+    def set_avoid(self, caller_driver, caller_wait, avoid):
+        avoid_element = caller_driver.find_elements_by_css_selector(str(avoid))
+        check_avoid_length = len(avoid_element)
+        if check_avoid_length > 0:
+            caller_wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(avoid))))
 
     def check_os_env(self):
         mandatory_os_env = ["PYTHONPATH", "PATH", "BUCKET", "TIME_WAIT", "TIME_SLEEP"]

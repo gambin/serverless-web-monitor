@@ -5,6 +5,7 @@ import uuid
 import time
 import json
 import logging
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -15,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
-import sys
+from src.w3_utils import W3Utils
 
 class WebDriverWrapper:
 
@@ -76,6 +77,8 @@ class WebDriverWrapper:
 
         self._wait = WebDriverWait(self._driver, int(os.environ["TIME_WAIT"]))
 
+        self._utils = W3Utils()
+
         if self.download_location:
             self.enable_download_in_headless_chrome()
     
@@ -125,24 +128,23 @@ class WebDriverWrapper:
     def set_text_input(self, selector, value_setter, to_avoid=None, ts=0):
         try:
             if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-            
+                self._utils.set_avoid(self._driver, self._wait, to_avoid)
+
+            if int(ts) > 0:
+                time.sleep(int(ts))
+
             element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
             
+            # element.clear() would be awesome, but not working properly on some sites..
+            element.send_keys(Keys.CONTROL + "a")
+
             if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-            
-            if element.is_enabled():
-                element.clear()
-            
-            if ts != 0:
-                time.sleep(int(ts))
-                if to_avoid is not None:
-                    self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
-                element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
-            
-            if len(element.get_attribute('value')) == 0:
-                element.send_keys(value_setter)
+                self._utils.set_avoid(self._driver, self._wait, to_avoid)
+
+            element.send_keys(value_setter)
+
+            self.key_press("TAB")
+
         except:
             raise
 
@@ -150,23 +152,18 @@ class WebDriverWrapper:
     def button_click(self, selector, to_avoid=None):
         try:
             if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+                self._utils.set_avoid(self._driver, self._wait, to_avoid)
             self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
             element = self._wait.until(ExpectedConditions.element_to_be_clickable((By.CSS_SELECTOR, selector)))
-            if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
             element.click()
         except: 
             raise
 
-
     def set_drop_down(self, selector, value_setter, to_avoid=None):
         try:
             if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+                self._utils.set_avoid(self._driver, self._wait, to_avoid)
             element = Select(self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector))))
-            if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
             element.select_by_visible_text(value_setter)
         except: 
             raise
@@ -174,7 +171,7 @@ class WebDriverWrapper:
     def key_press(self, value_setter, to_avoid=None):
         try:
             if to_avoid is not None:
-                self._wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(to_avoid))))
+                self._utils.set_avoid(self._driver, self._wait, to_avoid)
             element = self._driver.switch_to.active_element
             if value_setter == 'RETURN' or value_setter == 'ENTER':
                 element.send_keys(Keys.RETURN)
@@ -313,7 +310,7 @@ class WebDriverWrapper:
             s3.upload_file(screenshot_file_path, os.environ["BUCKET"], "screenshots/{}".format(screenshot_file_name))
             s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}".format(result_file_name))
             s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}.w3swm-last.json".format(result_file_name.split(".w3swm")[0],))
-            self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to {}".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
+            self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
     
             ## done task
             self._driver.close()
