@@ -78,7 +78,22 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 * [Chromium binary](https://github.com/adieuadieu/serverless-chrome/releases)
 
 
-> **Obs.:** toda a implementação foi realizada em ambiente Linux. Consigo fazer o setup e build no Windows/ WSL? Provável, mas o tio aqui não teve saco e tempo pra testar ainda.
+> **Obs.:** toda a implementação foi realizada em ambiente Linux. Consigo fazer o setup e build no Windows/ WSL? Dá sim!! Agora o tio arrumou um tempo e fez alguns testes :)
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/11/WSL-01.png)
+
+A única diferença é que o setup no WSL é mais sacal. Eu fiz um teste usando o Ubuntu no WSL2, e nele voce precisa instalar alguns componentes no SO, pois a build/ imagem do Ubuntu na MS Store vem muito mais pelada que um Ubuntu "tradicional". Seguem alguns pacotes quase que nativos mas precisei instalar no braço:
+
+```sh
+$ sudo apt install python3-pip unzip make curl apt-transport-https ca-certificates software-properties-common python3.7 python3.6 virtualenvwrapper python3-virtualenv
+```
+
+E claro, não podia faltar os 'cat jumps' né? A instalação do Docker não é tão easy mode no WSL como uma build Ubuntu tradicional, mas bem..
+
+Eu comecei neste step by step: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+
+Mas terminei neste aqui (**recomendo fortemente**): https://docs.docker.com/docker-for-windows/wsl/
+
 
 
 ### Primeiros passos
@@ -105,19 +120,15 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 - Execute os comandos nessa ordem:
 ```sh
 $ make clean fetch-dependencies
-$ sudo make docker-build
+$ make docker-build
 ```
 
 
 **Trabalhando local (docker)**
-- É preciso antes definir as chaves do docker-compose, via arquivo aws credentials e etc. Se você estiver sem muita paciência, dá pra mudar o makefile (linha 35) de modo que ele fica igual o modelo abaixo (meio go-horse, mas funciona), mandando variável de ambiente pro docker-compose:
-```sh
-docker-compose run -e AWS_ACCESS_KEY_ID=<AQUI-VAI-MINHA-KEY> -e AWS_SECRET_ACCESS_KEY=<AQUI-VAI-MEU-SECRET> lambda src.lambda_function.lambda_handler
-```
-- Obviamente que você não precisa disso no contexto do lambda.
+- Faça o setup do (AWS credentials)[https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html], o docker-compose.yml já está preparado pra isso meu caro. Neste mesmo arquivo voce pode alterar region e profile do AWS Credentials. Obviamente que você não precisa disso executando no contexto do Lambda, lá voce deve se preocupar com as Policies.
 - Para executar no seu docker
 ```sh
-$ sudo make docker-run
+$ make docker-run
 ```
 > **Se estiver tudo bem** verifique em seu bucket na pasta **"/results"** e **"/screenshots"** se foi carregada a página abaixo com sucesso!
 
@@ -174,3 +185,4 @@ Basicamente as unicas variáveis de ambiente que você precisa se preocupar são
 - **BUCKET**: nome do bucket que armazenará resultados, screenshots e roteiros de teste
 - **TIME_WAIT**: tempo implicito (em segundos) que um elemento poderá ser localizado na página
 - **TIME_SLEEP**: tempo de espera (delay) para ser implementado quando desejado
+- **LOG_LEVEL**: pode ser INFO ou ERROR. Autoexplicativo.
