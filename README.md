@@ -189,3 +189,4 @@ Basicamente as unicas variáveis de ambiente que você precisa se preocupar são
 - **BUCKET**: nome do bucket que armazenará resultados, screenshots e roteiros de teste
 - **TIME_WAIT**: tempo implicito (em segundos) que um elemento poderá ser localizado na página
 - **TIME_SLEEP**: tempo de espera (delay) para ser implementado quando desejado
+- **LOG_LEVEL**: pode ser INFO ou ERROR. Autoexplicativo.
