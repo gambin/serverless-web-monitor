@@ -78,7 +78,22 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 * [Chromium binary](https://github.com/adieuadieu/serverless-chrome/releases)
 
 
-> **Obs.:** toda a implementação foi realizada em ambiente Linux. Consigo fazer o setup e build no Windows/ WSL? Provável, mas o tio aqui não teve saco e tempo pra testar ainda.
+> **Obs.:** toda a implementação foi realizada em ambiente Linux. Consigo fazer o setup e build no Windows/ WSL? Dá sim!! Agora o tio arrumou um tempo e fez alguns testes :)
+
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/11/WSL-01.png)
+
+A única diferença é que o setup no WSL é mais sacal. Eu fiz um teste usando o Ubuntu no WSL2, e nele voce precisa instalar alguns componentes no SO, pois a build/ imagem do Ubuntu na MS Store vem muito mais pelada que um Ubuntu "tradicional". Seguem alguns pacotes quase que nativos mas precisei instalar no braço:
+
+```sh
+$ sudo apt install python3-pip unzip make curl apt-transport-https ca-certificates software-properties-common
+```
+
+E claro, não podia faltar os 'cat jumps' né? A instalação do Docker não é tão easy mode no WSL como uma build Ubuntu tradicional, mas bem..
+
+Eu comecei neste step by step: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+
+Mas terminei neste aqui (**recomendo fortemente**): https://docs.docker.com/docker-for-windows/wsl/
+
 
 
 ### Primeiros passos
@@ -105,7 +120,7 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 - Execute os comandos nessa ordem:
 ```sh
 $ make clean fetch-dependencies
-$ sudo make docker-build
+$ make docker-build
 ```
 
 
@@ -117,7 +132,7 @@ docker-compose run -e AWS_ACCESS_KEY_ID=<AQUI-VAI-MINHA-KEY> -e AWS_SECRET_ACCES
 - Obviamente que você não precisa disso no contexto do lambda.
 - Para executar no seu docker
 ```sh
-$ sudo make docker-run
+$ make docker-run
 ```
 > **Se estiver tudo bem** verifique em seu bucket na pasta **"/results"** e **"/screenshots"** se foi carregada a página abaixo com sucesso!
 
