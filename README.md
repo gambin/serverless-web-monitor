@@ -82,6 +82,10 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 
 ![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/11/WSL-01.png)
 
+![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/11/WSL-02.png)
+
+
+
 A única diferença é que o setup no WSL é mais sacal. Eu fiz um teste usando o Ubuntu no WSL2, e nele voce precisa instalar alguns componentes no SO, pois a build/ imagem do Ubuntu na MS Store vem muito mais pelada que um Ubuntu "tradicional". Seguem alguns pacotes quase que nativos mas precisei instalar no braço:
 
 ```sh
