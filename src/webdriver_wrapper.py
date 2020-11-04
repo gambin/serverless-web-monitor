@@ -6,6 +6,7 @@ import time
 import json
 import logging
 import sys
+import traceback
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -144,7 +145,6 @@ class WebDriverWrapper:
             element.send_keys(value_setter)
 
             self.key_press("TAB")
-
         except:
             raise
 
@@ -181,23 +181,15 @@ class WebDriverWrapper:
             raise
     
     def test_runner(self, test_to_run):       
- 
-        # defining the result sets
         json_result_data = []
-        screenshot_file_path = '{}.png'.format(test_to_run)
         screenshot_file_name = '{}.png'.format(test_to_run.split("/")[3])
-        result_file_path = '{}.json'.format(test_to_run)
         result_file_name = '{}.json'.format(test_to_run.split("/")[3])
         ex = None
 
         try:
-
-            # connecting to AWS S3
-            s3 = boto3.client('s3')
-
             # reading previously downloaded test
             self._logger.info("Loading local downloaded test: <{}.w3swm>".format(test_to_run))
-            instructions = open(test_to_run, "r")
+            instructions = list(open(test_to_run, "r"))
             to_avoid = None
             to_skip = None
 
@@ -269,9 +261,16 @@ class WebDriverWrapper:
             # defining success output
             json_result_data.append({
                 "status": 200,
-                "filename": "Screenshot: {}. ".format(screenshot_file_name),
-                "description": "Teste <{}> finalizado com sucesso".format(test_to_run)
+                "description": "Test <{}> finished successfully".format(test_to_run)
             })
+
+            # logging info
+            if os.environ["LOG_LEVEL"] == "INFO":
+                # setting local screenshot
+                self._utils.set_screenshot(self._driver, test_to_run)
+
+                # setting local JSON
+                self._utils.set_json_output(result_file_path, json_result_data, test_to_run)
 
             # job done!
             self._logger.info("Well done!")
@@ -281,36 +280,43 @@ class WebDriverWrapper:
 
             json_result_data.append({
                 "status": 422,
-                "filename": "Screenshot: {}. ".format(screenshot_file_name),
+                "error_line": "({}) - {}".format(instructions.index(line), line),
                 "exception": getattr(e, 'message', repr(e)),
-                "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML")
+                "traceback": traceback.format_exc()
             })
 
-            self._logger.error("### An exception has ocurred!")
-            self._logger.error("Exception: " + str(e))
+            self._logger.error("# An exception has ocurred!")
+            self._logger.error("Line: " + str(line))
 
-            # getting the chrome output logs
-            with open(self._tmp_folder + "/chromedriver.log", "r") as logfile:
-                log_data = logfile.readlines()
-                self._logger.info("### Chrome error logs")
-                self._logger.info(log_data)
+            if os.environ["LOG_LEVEL"] == "INFO":
+                # throw full exception
+                self._logger.error("Exception: " + str(e))
+                
+                # getting the chrome output logs
+                with open(self._tmp_folder + "/chromedriver.log", "r") as logfile:
+                    log_data = logfile.readlines()
+                    self._logger.info("### Chrome error logs")
+                    self._logger.info(log_data)
 
-            # setting error exception
+                    # defining screenshot filename
+                    json_result_data[0].update({
+                        "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML"),
+                        "chrome_driver_logs": log_data
+                    })
+                    
+                    
+            # logging error
+            if os.environ["LOG_LEVEL"] in ["INFO", "ERROR"]:
+                # setting local screenshot
+                self._utils.set_screenshot(self._driver, test_to_run)
+
+                # setting local JSON
+                self._utils.set_json_output(json_result_data, test_to_run)
+
+            # setting error exception to raise on lambda execution
             ex = e
 
         finally:
-            # generating screenshots locally
-            time.sleep(int(os.environ["TIME_SLEEP"]))
-
-            self._driver.save_screenshot(screenshot_file_path)
-            with open(result_file_path, "w") as json_file:
-                json.dump(json_result_data, json_file)
-
-            # uploading screenshot and test result
-            s3.upload_file(screenshot_file_path, os.environ["BUCKET"], "screenshots/{}".format(screenshot_file_name))
-            s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}".format(result_file_name))
-            s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}.w3swm-last.json".format(result_file_name.split(".w3swm")[0],))
-            self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
     
             ## done task
             self._driver.close()

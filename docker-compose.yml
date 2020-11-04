@@ -9,5 +9,6 @@ services:
       - BUCKET=monitoracao-w3do
       - TIME_WAIT=10
       - TIME_SLEEP=3
+      - LOG_LEVEL=ERROR
     volumes:
       - ./src/:/var/task/src/
