@@ -85,7 +85,7 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 A única diferença é que o setup no WSL é mais sacal. Eu fiz um teste usando o Ubuntu no WSL2, e nele voce precisa instalar alguns componentes no SO, pois a build/ imagem do Ubuntu na MS Store vem muito mais pelada que um Ubuntu "tradicional". Seguem alguns pacotes quase que nativos mas precisei instalar no braço:
 
 ```sh
-$ sudo apt install python3-pip unzip make curl apt-transport-https ca-certificates software-properties-common
+$ sudo apt install python3-pip unzip make curl apt-transport-https ca-certificates software-properties-common python3.7 python3.6 virtualenvwrapper python3-virtualenv
 ```
 
 E claro, não podia faltar os 'cat jumps' né? A instalação do Docker não é tão easy mode no WSL como uma build Ubuntu tradicional, mas bem..
@@ -125,11 +125,7 @@ $ make docker-build
 
 
 **Trabalhando local (docker)**
-- É preciso antes definir as chaves do docker-compose, via arquivo aws credentials e etc. Se você estiver sem muita paciência, dá pra mudar o makefile (linha 35) de modo que ele fica igual o modelo abaixo (meio go-horse, mas funciona), mandando variável de ambiente pro docker-compose:
-```sh
-docker-compose run -e AWS_ACCESS_KEY_ID=<AQUI-VAI-MINHA-KEY> -e AWS_SECRET_ACCESS_KEY=<AQUI-VAI-MEU-SECRET> lambda src.lambda_function.lambda_handler
-```
-- Obviamente que você não precisa disso no contexto do lambda.
+- Faça o setup do (AWS credentials)[https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html], o docker-compose.yml já está preparado pra isso meu caro. Neste mesmo arquivo voce pode alterar region e profile do AWS Credentials. Obviamente que você não precisa disso executando no contexto do Lambda, lá voce deve se preocupar com as Policies.
 - Para executar no seu docker
 ```sh
 $ make docker-run
