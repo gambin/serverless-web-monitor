@@ -1,4 +1,4 @@
-.PHONY: help check clean fetch-dependencies docker-build build-lambda-package python-env
+.PHONY: help check clean fetch-dependencies docker-build build-lambda-package
 
 help:
 	@python3 -c 'import fileinput,re; \
@@ -26,9 +26,6 @@ fetch-dependencies: ## download chromedriver, headless-chrome to `./bin/`, prepa
 	curl -SL https://github.com/adieuadieu/serverless-chrome/releases/download/v1.0.0-54/stable-headless-chromium-amazonlinux-2017-03.zip > headless-chromium.zip
 	unzip headless-chromium.zip -d bin/
 
-	# Download dependencies
-	pip install -r requirements.txt -t build/lib/.
-
 	# Clean
 	@rm headless-chromium.zip chromedriver.zip
 
@@ -39,16 +36,12 @@ docker-build: ## create Docker image
 docker-run: ## run `src.lambda_function.lambda_handler` with docker-compose
 	docker-compose run lambda src.lambda_function.lambda_handler
 
-python-env: ## set local python3.7 virtual env
-	virtualenv -p /usr/bin/python3.7 venv
-	source ./venv/bin/activate
-
 build-lambda-package: clean fetch-dependencies ## prepares zip archive for AWS Lambda deploy (-> build/build.zip)
 	mkdir build
 	cp -r src build/.
 	cp -r bin build/.
 	cp -r lib build/.
-	pip install -r requirements.txt -t build/lib/.
+	pip3 install -r requirements.txt -t build/lib/.
 	cd build; zip -9qr build.zip .
 	cp build/build.zip .
 	rm -rf build

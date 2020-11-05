@@ -255,9 +255,6 @@ class WebDriverWrapper:
                             if(verb == "Selecionar"):
                                 self.set_drop_down(css_selector, user_value, to_avoid)
 
-            # close the opened file
-            instructions.close()
-
             # defining success output
             json_result_data.append({
                 "status": 200,
@@ -270,23 +267,24 @@ class WebDriverWrapper:
                 self._utils.set_screenshot(self._driver, test_to_run)
 
                 # setting local JSON
-                self._utils.set_json_output(result_file_path, json_result_data, test_to_run)
+                self._utils.set_json_output(json_result_data, test_to_run)
 
             # job done!
             self._logger.info("Well done!")
 
         except Exception as e:
             # defining exception output
+            line_error_test = "line {}:  {}".format(int(instructions.index(line)) + 1, line)
 
             json_result_data.append({
                 "status": 422,
-                "error_line": "({}) - {}".format(instructions.index(line), line),
+                "error_line": line_error_test,
                 "exception": getattr(e, 'message', repr(e)),
                 "traceback": traceback.format_exc()
             })
 
             self._logger.error("# An exception has ocurred!")
-            self._logger.error("Line: " + str(line))
+            self._logger.error(line_error_test)
 
             if os.environ["LOG_LEVEL"] == "INFO":
                 # throw full exception

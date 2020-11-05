@@ -66,7 +66,7 @@ A solução basicamente compreende o seguinte cenário:
 Esse cara roda em docker, mas foi feito pra AWS Lambda. Choose your path, padawan.
 Para rodar em docker e buildar o pacote para Lambda você irá precisar de:
 
-* [Python 3.6](https://wiki.python.org/moin/BeginnersGuide/Download)
+* [Python 3.7](https://wiki.python.org/moin/BeginnersGuide/Download)
 * [Docker](https://docs.docker.com/engine/installation/#get-started)
 * [Docker compose](https://docs.docker.com/compose/install/#install-compose)
 
@@ -89,7 +89,7 @@ Eventualmente teremos outros itens que serão instalados automaticamente, como:
 A única diferença é que o setup no WSL é mais sacal. Eu fiz um teste usando o Ubuntu no WSL2, e nele voce precisa instalar alguns componentes no SO, pois a build/ imagem do Ubuntu na MS Store vem muito mais pelada que um Ubuntu "tradicional". Seguem alguns pacotes quase que nativos mas precisei instalar no braço:
 
 ```sh
-$ sudo apt install python3-pip unzip make curl apt-transport-https ca-certificates software-properties-common python3.7 python3.6 virtualenvwrapper python3-virtualenv
+$ sudo apt install python3-pip unzip make curl apt-transport-https ca-certificates software-properties-common python3.7 python3.6 virtualenvwrapper python3-virtualenv zip
 ```
 
 E claro, não podia faltar os 'cat jumps' né? A instalação do Docker não é tão easy mode no WSL como uma build Ubuntu tradicional, mas bem..
@@ -112,7 +112,7 @@ Mas terminei neste aqui (**recomendo fortemente**): https://docs.docker.com/dock
     - **/screenshots**
 - Crie um novo lambda, contemplando:
     - Policy de leitura e escrita no S3
-    - Runtime Python 3.6
+    - Runtime Python 3.7
     - RAM 1500Mb (recomendado, lembre-se que estamos usando um Chrome)
     - Tempo de execução de 2 min (isso pode variar com seu uso, é só uma sugestão)
 - Faça o upload do arquivo **"template.w3swm"** para a pasta **"/tests"** que foi criada previamente no novo bucket
@@ -137,6 +137,14 @@ $ make docker-run
 > **Se estiver tudo bem** verifique em seu bucket na pasta **"/results"** e **"/screenshots"** se foi carregada a página abaixo com sucesso!
 
 **Gerando o pacote AWS Lambda:**
+- Certifique-se de rodar uma versão do Python compatível com o build dos pacotes. Da última versão que testei, python3.7 rodou 100%, para isso recomendo que você utilize um virtual environmente:
+
+```sh
+$ virtualenv -p /usr/bin/python3.7 venv
+$ source ./venv/bin/activate
+```
+  
+
 - O comando abaixo gera o arquivo **"build.zip"**, que você deverá subir para um bucket de sua preferencia e referenciar como código fonte em seu lambda
 ```sh
 $ make build-lambda-package
