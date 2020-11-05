@@ -145,6 +145,8 @@ class WebDriverWrapper:
             element.send_keys(value_setter)
 
             self.key_press("TAB")
+            self.key_press("SHIFT+TAB", to_avoid)
+
         except:
             raise
 
@@ -177,6 +179,8 @@ class WebDriverWrapper:
                 element.send_keys(Keys.RETURN)
             elif value_setter == 'TAB':
                 element.send_keys(Keys.TAB)
+            elif value_setter == 'SHIFT+TAB':
+                element.send_keys(Keys.SHIFT, Keys.TAB)
         except: 
             raise
     
