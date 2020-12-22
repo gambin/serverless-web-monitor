@@ -1,7 +1,7 @@
 # λ Serverless Web Monitor (Lambda Edition)
 
-[![](https://icons.iconarchive.com/icons/designbolts/world-cup-2014-teams/48/Brazil-Flag-icon.png)](https://github.com/gambin/serverless-web-monitor/blob/main/README.md#pt-br)
-[![](https://icons.iconarchive.com/icons/designbolts/world-cup-2014-teams/48/USA-Flag-icon.png)](https://github.com/gambin/serverless-web-monitor/blob/main/README.md#en-us)
+[![](https://icons.iconarchive.com/icons/designbolts/world-cup-2014-teams/48/Brazil-Flag-icon.png)](#pt-br)
+[![](https://icons.iconarchive.com/icons/designbolts/world-cup-2014-teams/48/USA-Flag-icon.png)](#en-us)
 
 Source: https://www.iconarchive.com/show/world-cup-2014-teams-icons-by-designbolts.html
 
