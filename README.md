@@ -60,6 +60,11 @@ A solução basicamente compreende o seguinte cenário:
 ![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/template.w3swm.2020-10-16_22-36-55.png)
 
 
+### Quero usar agora!
+
+Baixe agora mesmo o pack com pacote pronto para subir no seu AWS Lambda na página de releases: https://github.com/gambin/serverless-web-monitor/releases
+
+
 
 ### Requisitos
 
@@ -267,6 +272,10 @@ This solution comprehends the following scenario:
 
 ![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/template.w3swm.2020-10-16_22-36-55.png)
 
+
+### Want to use it now!
+
+Please download one of our releases to run RIGHT NOW on your AWS Lambda: https://github.com/gambin/serverless-web-monitor/releases
 
 
 ### Requirements
