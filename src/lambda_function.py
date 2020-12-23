@@ -3,7 +3,7 @@ from src.w3_utils import W3Utils
 
 def lambda_handler(event, context, test_to_run = "template.w3swm", *args):
 
-    ## check if there's a brand test defined
+    ## check if there's a brand new test defined
     if event.get("test_to_run"):
         test_to_run = event["test_to_run"]   
 
@@ -19,5 +19,3 @@ def lambda_handler(event, context, test_to_run = "template.w3swm", *args):
 
     ## starting the test
     driver.test_runner(test_to_run_set)
-
-    #pray
