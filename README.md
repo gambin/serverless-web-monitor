@@ -8,6 +8,8 @@ Source: https://www.iconarchive.com/show/world-cup-2014-teams-icons-by-designbol
 
 ## pt-br
 
+Resumo: - solução de automação de testes regressivos agendados capaz de rodar em tecnologias serverless por meio de roteiros escritos em linguagem natural publicados em soluções de armazenamento cloud.
+
 Essa solução foi inspirada em https://github.com/vittorio-nardone/selenium-chromium-lambda
 
 Que foi inspirada em https://github.com/jairovadillo/pychromeless
@@ -145,6 +147,11 @@ $ make docker-build
 ```sh
 $ make docker-run
 ```
+
+- Para debugar remotamente no seu docker na porta 15678
+```sh
+$ make docker-debug
+```
 > **Se estiver tudo bem** verifique em seu bucket na pasta **"/results"** e **"/screenshots"** se foi carregada a página abaixo com sucesso!
 
 
@@ -210,10 +217,15 @@ Basicamente as unicas variáveis de ambiente que você precisa se preocupar são
 - **TIME_WAIT**: tempo implicito (em segundos) que um elemento poderá ser localizado na página
 - **TIME_SLEEP**: tempo de espera (delay) para ser implementado quando desejado
 - **LOG_LEVEL**: pode ser INFO ou ERROR. Autoexplicativo.
+- **DEBUG**: TRUE ou FALSE, para habilitar o stop de remote debugging
 
 ---
 
 ## en-us
+
+Abstract: solution to automate regression test to run scheduled and compatible with serverless technologies, trough publish of natural language scripts on a cloudable storage solutions.
+
+esumo: - solução de automação de testes regressivos agendados capaz de rodar em uma infraestrutura serverless por meio de roteiros escritos em linguagem natural.
 
 This solution was inspired by https://github.com/vittorio-nardone/selenium-chromium-lambda
 
@@ -224,9 +236,9 @@ That's an implementaion of https://github.com/adieuadieu/serverless-chrome/
 In other words - nobody invented the wheel here!
 
 
-Some of you may notice that implementing test scripts with selenium isn't so simple when you start to code it from sratch, specifically if you aren't a tester or just need to code some automation to run twice a year. We must care about chromedriver version, chrome browser version, selenium driver versions, platform (OS, language, many variables here..), how to handle timeouts/ timewaits/ timesleeps. So boring.
+Some of you may notice that implementing test scripts on selenium isn't so simple when you start to code it from scratch, specifically if you just need to code some automation to run twice a year. We must care about chromedriver version, chrome browser version, selenium driver versions, how to handle timeouts/ timewaits/ timesleeps. So boring.
 
-I know, i know.. there's pytest, some browser extensions that may help you to prepare or create a base version of your test. But how can you automate that? Of if you want to run the same test every single minute to stress or check your web application health?
+I know, i know... There's pytest, some browser extensions that may help you to prepare or create a base version of your test. But how can you automate that? Or if you want to run the same test every single minute to stress or check your web application health?
 
 Even more - if you want to have a kind of 'engine' that you may only upload and schedule test scripts to run periodically, and upload the tests result with the screenshot to an AWS Bucket, and using the Cloudwatch to notify you when some of your test fail?
 
@@ -234,9 +246,9 @@ That would be great hm?
 
 So this project was born following those guidelines, trying to be the most cost killer solution to run scheduled web tests - since it's going to be able to run on AWS Lambda, that costs CENTS by MILLIONS of executions.
 
-I started to built it on .Net Core to run on Docker, but since I meet the projects mentioned earlier, it becames a good opportunity to learn something new (Python, in this case), and since I never wrote any single line in Python I started to follow some voices on my head and copy/ pasting some parts of Stackoverflow. Not in this order or intensity.
+I started to built it on .Net Core to run on Docker, but I meet those projects mentioned earlier and it becames a good opportunity to learn something new (Python, in this case), and since I never wrote any single line in Python I started to follow some voices on my head and copy/ pasting some parts of Stackoverflow. Not in this order or intensity.
 
-So it was tailored to run an specific test, then it was refactored to be the more generic as possible. Please enjoy, ask, find bugs (and report them!), and if you can, commit and help me evolve this! There's a bunch to do :)
+Please enjoy, ask, find bugs (and report them!), and if you can, commit and help me evolve this! There's a bunch to do :)
 
 
 
@@ -355,6 +367,12 @@ $ make docker-build
 ```sh
 $ make docker-run
 ```
+
+- To debug remotely on your docker on port 15678
+```sh
+$ make docker-debug
+```
+
 > **If everything runs smoothly AND you enable INFO logs on EV** check your **"/results"** and **"/screenshots"** folder on S3!
 
 
@@ -419,3 +437,4 @@ Basicaly those are the unique EV you must care about:
 - **TIME_WAIT**: implicit time wait (in seconds) that an element must be located at the current page
 - **TIME_SLEEP**: delay time to be implemented anytime you want
 - **LOG_LEVEL**: INFO or ERROR. Self explanatory.
+- **DEBUG**: TRUE or FALSE, to enable remote debug attach
