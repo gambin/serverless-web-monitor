@@ -3,7 +3,7 @@
 [![](https://icons.iconarchive.com/icons/designbolts/world-cup-2014-teams/48/Brazil-Flag-icon.png)](#pt-br)
 [![](https://icons.iconarchive.com/icons/designbolts/world-cup-2014-teams/48/USA-Flag-icon.png)](#en-us)
 
-Source: https://www.iconarchive.com/show/world-cup-2014-teams-icons-by-designbolts.html
+Flag images source: https://www.iconarchive.com/show/world-cup-2014-teams-icons-by-designbolts.html
 
 
 ## pt-br
