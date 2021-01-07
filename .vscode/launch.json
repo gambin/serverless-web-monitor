@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Remote Attach",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 15678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/var/task"
+                }
+            ]
+        },
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "lambda_function.lambda_handler",
+            "invokeTarget": {
+                "target": "code",
+                "projectRoot": "",
+                "lambdaHandler": "lambda_function.lambda_handler"
+            },
+            "lambda": {
+                "pathMappings": [],
+                "runtime": "python3.7",
+                "payload": {},
+                "environmentVariables": {
+                    "PYTHONPATH": "/var/task/src:/var/task/lib",
+                    "PATH": "/var/task/bin",
+                    "BUCKET": "monitoracao-w3do",
+                    "TIME_WAIT": "10",
+                    "TIME_SLEEP": "3",
+                    "LOG_LEVEL": "ERROR",
+                    "DEBUG": "TRUE",
+                    "DEBUG_PORT": "15678"
+                }
+            },
+        },
+    ]
+}

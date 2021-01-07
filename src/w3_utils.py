@@ -1,4 +1,5 @@
 import os
+import ptvsd
 import logging
 import boto3
 import botocore
@@ -23,7 +24,7 @@ class W3Utils:
             caller_wait.until(ExpectedConditions.invisibility_of_element_located((By.CSS_SELECTOR, str(avoid))))
 
     def check_os_env(self):
-        mandatory_os_env = ["PYTHONPATH", "PATH", "BUCKET", "TIME_WAIT", "TIME_SLEEP", "LOG_LEVEL"]
+        mandatory_os_env = ["PYTHONPATH", "PATH", "BUCKET", "TIME_WAIT", "TIME_SLEEP", "LOG_LEVEL", "DEBUG"]
         for os_env in mandatory_os_env:
             if os_env not in os.environ:
                 self._logger.error("It's mandatory to define [{}] environment variable".format(os_env))
@@ -43,6 +44,7 @@ class W3Utils:
         #taking screenshot
         caller_driver.save_screenshot(screenshot_file_path)
     
+
     def set_json_output(self, json_result_data, test_to_run):
         # setting some path variables
         screenshot_file_path = '{}.png'.format(test_to_run)      
@@ -70,6 +72,14 @@ class W3Utils:
         s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}".format(result_file_name))
         s3.upload_file(result_file_path, os.environ["BUCKET"], "results/{}.w3swm-last.json".format(result_file_name.split(".w3swm")[0],))
         self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
+
+
+    def check_debug(self):
+        if os.environ["DEBUG"] == "TRUE":
+            ptvsd.enable_attach(address=('0.0.0.0', int(os.environ["DEBUG_PORT"])), redirect_output=True)
+            self._logger.info("Waiting debugger to be attached")
+            ptvsd.wait_for_attach()
+            self._logger.info("Debugger attached!")
 
 
     def set_test_to_run(self, test_to_run, tmp_folder):

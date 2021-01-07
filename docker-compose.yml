@@ -10,6 +10,8 @@ services:
       - TIME_WAIT=10
       - TIME_SLEEP=3
       - LOG_LEVEL=ERROR
+      - DEBUG=TRUE
+      - DEBUG_PORT=15678
       - AWS_REGION=us-east-1
       - AWS_PROFILE=default
     volumes:

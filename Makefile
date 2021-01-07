@@ -34,7 +34,10 @@ docker-build: ## create Docker image
 	docker-compose build
 
 docker-run: ## run `src.lambda_function.lambda_handler` with docker-compose
-	docker-compose run lambda src.lambda_function.lambda_handler
+	docker-compose run -e DEBUG=FALSE lambda src.lambda_function.lambda_handler
+
+docker-debug: ## run `src.lambda_function.lambda_handler` with docker-compose
+	docker-compose run -p 15678:15678 lambda src.lambda_function.lambda_handler
 
 build-lambda-package: clean fetch-dependencies ## prepares zip archive for AWS Lambda deploy (-> build/build.zip)
 	mkdir build
