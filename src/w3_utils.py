@@ -6,7 +6,9 @@ import botocore
 import sys
 import time
 import json
+import threading
 
+from threading import Timer
 from enum import Enum 
 from src.errors import Errors
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
@@ -74,12 +76,13 @@ class W3Utils:
         self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
 
 
+
     def check_debug(self):
         if os.environ["DEBUG"] == "TRUE":
             ptvsd.enable_attach(address=('0.0.0.0', int(os.environ["DEBUG_PORT"])), redirect_output=True)
-            self._logger.info("Waiting debugger to be attached")
+            print("Debugger waiting to be attached on port {}".format(int(os.environ["DEBUG_PORT"])))
             ptvsd.wait_for_attach()
-            self._logger.info("Debugger attached!")
+            print("Debugger attached bro!")
 
 
     def set_test_to_run(self, test_to_run, tmp_folder):
