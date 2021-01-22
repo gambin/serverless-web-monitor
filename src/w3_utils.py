@@ -76,7 +76,6 @@ class W3Utils:
         self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
 
 
-
     def check_debug(self):
         if os.environ["DEBUG"] == "TRUE":
             ptvsd.enable_attach(address=('0.0.0.0', int(os.environ["DEBUG_PORT"])), redirect_output=True)
@@ -85,24 +84,21 @@ class W3Utils:
             print("Debugger attached bro!")
 
 
-    def set_test_to_run(self, test_to_run, tmp_folder):
+    def check_test_availability(self, test_to_run):
         if (test_to_run is None or test_to_run == ""):
             self._logger.error("It's mandatory to set the test to run.")
             sys.exit(Errors.TEST_NOT_DEFINED)
 
+
+    def download_test_from_cloud(self, local_filename, test_to_run):
         try:
-            ts = time.gmtime()
-            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S", ts)
-            local_filename = "{}/{}.{}".format(tmp_folder, test_to_run, timestamp)
-           
+            # defining local filename       
             s3 = boto3.client("s3")
             file_content = s3.get_object(Bucket=os.environ["BUCKET"], Key='{}/{}'.format("tests", test_to_run))
             result = file_content["Body"].read()
-            
-            self._logger.info("Downloading test locally: [AWS]{} >> [LOCAL]{}".format(test_to_run, local_filename))
             with open(local_filename, "wb") as file:
                 file.write(result)
-            return local_filename
+            return local_filename     
 
         except botocore.exceptions.ClientError as ex:
             if (ex.response["Error"]["Code"] == "404" or ex.response["Error"]["Code"] == 'NoSuchKey'):
@@ -113,6 +109,24 @@ class W3Utils:
                 self._logger.error("General exception: {}".format(str(ex)))
                 sys.exit(Errors.GENERIC_EXCEPTION)
 
+        except Exception as ex:
+            # Something else has gone wrong.
+            self._logger.error("General exception: {}".format(str(ex)))
+            sys.exit(Errors.GENERIC_EXCEPTION)   
+
+
+    def set_test_to_run(self, test_to_run, tmp_folder):
+        try:
+            # check if test is available to run
+            self.check_test_availability(test_to_run)
+
+            # defining local filename
+            ts = time.gmtime()
+            timestamp = time.strftime("%Y-%m-%d_%H-%M-%S", ts)
+            local_filename = "{}/{}.{}".format(tmp_folder, test_to_run, timestamp)
+            
+            return self.download_test_from_cloud(local_filename, test_to_run)
+        
         except Exception as ex:
             # Something else has gone wrong.
             self._logger.error("General exception: {}".format(str(ex)))

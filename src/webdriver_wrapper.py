@@ -100,6 +100,7 @@ class WebDriverWrapper:
             except Exception as e:
                 print(e)
 
+
     def enable_download_in_headless_chrome(self):
         """
         This function was pulled from
@@ -161,6 +162,7 @@ class WebDriverWrapper:
         except: 
             raise
 
+
     def set_drop_down(self, selector, value_setter, to_avoid=None):
         try:
             if to_avoid is not None:
@@ -169,6 +171,7 @@ class WebDriverWrapper:
             element.select_by_visible_text(value_setter)
         except: 
             raise
+
 
     def key_press(self, value_setter, to_avoid=None):
         try:
@@ -183,7 +186,8 @@ class WebDriverWrapper:
                 element.send_keys(Keys.SHIFT, Keys.TAB)
         except: 
             raise
-    
+
+
     def test_runner(self, test_to_run):       
         json_result_data = []
         screenshot_file_name = '{}.png'.format(test_to_run.split("/")[3])
@@ -326,4 +330,3 @@ class WebDriverWrapper:
             # if error, raise exception on lambda execution
             if (ex):
                 raise ex
-            
