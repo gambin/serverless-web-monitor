@@ -225,8 +225,6 @@ Basicamente as unicas variáveis de ambiente que você precisa se preocupar são
 
 Abstract: solution to automate regression test to run scheduled and compatible with serverless technologies, trough publish of natural language scripts on a cloudable storage solutions.
 
-esumo: - solução de automação de testes regressivos agendados capaz de rodar em uma infraestrutura serverless por meio de roteiros escritos em linguagem natural.
-
 This solution was inspired by https://github.com/vittorio-nardone/selenium-chromium-lambda
 
 That was inspired by https://github.com/jairovadillo/pychromeless
