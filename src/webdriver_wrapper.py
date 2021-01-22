@@ -18,6 +18,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from src.w3_utils import W3Utils
+from src.actions import TestActions
 
 class WebDriverWrapper:
 
@@ -235,29 +236,24 @@ class WebDriverWrapper:
                             verb = statement[0].strip()
                             user_value = statement[1].strip()
 
-                            ## Esperar (to wait)
-                            ## Evitar (to avoid)
-                            ## Acessar (to get)
-                            ## Clicar (to click)
-                            ## Ignorar (to skip)
                             self._logger.info("Action: <{}>. Value: <{}>.".format(verb, user_value))
 
-                            if(verb == "Esperar"):
+                            if(verb in TestActions.TOWAIT):
                                 time.sleep(int(user_value))
                             
-                            if(verb == "Evitar"):
+                            if(verb in TestActions.TOAVOID):
                                 to_avoid = user_value
 
-                            if(verb == "Acessar"):
+                            if(verb in TestActions.TOACCESS):
                                 self._driver.get(user_value)
 
-                            if(verb == "Clicar"):
+                            if(verb in TestActions.TOCLICK):
                                 self.button_click(user_value, to_avoid)
 
-                            if(verb == "Ignorar"):
+                            if(verb in TestActions.TOIGNORE):
                                 to_skip = user_value
 
-                            if(verb == "Pressionar"):
+                            if(verb in TestActions.TOPRESS):
                                 self.key_press(user_value)
 
 
@@ -267,19 +263,18 @@ class WebDriverWrapper:
                             css_selector = statement[1].strip()
                             user_value = statement[3].strip()
 
-                            ## Preencher (to fill)
-                            ## Selecionar (to select)
                             self._logger.info("Action: <{}>. Selector: <{}>. Value: <{}>.".format(verb, css_selector, user_value))
 
-                            if (verb == "Preencher"):
+                            if (verb in TestActions.TOFILL):
                                 if (line.strip().endswith("com delay")):
                                     self.set_text_input(css_selector, user_value, to_avoid, ts=os.environ["TIME_SLEEP"])
                                 else :    
                                     self.set_text_input(css_selector, user_value, to_avoid)
 
-                            if(verb == "Selecionar"):
+                            if(verb in TestActions.TOSELECT):
                                 self.set_drop_down(css_selector, user_value, to_avoid)
-
+                               
+                                
             # defining success output
             json_result_data.append({
                 "status": 200,
