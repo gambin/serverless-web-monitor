@@ -82,7 +82,8 @@ class WebDriverWrapper:
 
         if self.download_location:
             self.enable_download_in_headless_chrome()
-    
+
+
     def close(self):
         # Close webdriver connection
         self._driver.quit()
@@ -129,22 +130,28 @@ class WebDriverWrapper:
 
     def set_text_input(self, selector, value_setter, to_avoid=None, ts=0):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
 
+            # check if there's a pre-defined timesleep
             if int(ts) > 0:
                 time.sleep(int(ts))
 
+            # getting the element
             element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
             
             # element.clear() would be awesome, but not working properly on some sites..
             element.send_keys(Keys.CONTROL + "a")
 
+            # to be implemented, happy to working with python, not with Go-Lang LOL
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
 
+            # settings the values to selector
             element.send_keys(value_setter)
 
+            # i don't want to waste my time to care about client side actions like on blur, on change, so...
             self.key_press("TAB")
             self.key_press("SHIFT+TAB", to_avoid)
 
@@ -154,10 +161,15 @@ class WebDriverWrapper:
     
     def button_click(self, selector, to_avoid=None):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
+
+            # is there a way to assure that the element is ready to interact with? this way..
             self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
             element = self._wait.until(ExpectedConditions.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            
+            # and go!
             element.click()
         except: 
             raise
@@ -165,8 +177,11 @@ class WebDriverWrapper:
 
     def set_drop_down(self, selector, value_setter, to_avoid=None):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
+
+            # is there a way to assure that the element is ready to interact with? this way..
             element = Select(self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector))))
             element.select_by_visible_text(value_setter)
         except: 
@@ -175,9 +190,13 @@ class WebDriverWrapper:
 
     def key_press(self, value_setter, to_avoid=None):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
             element = self._driver.switch_to.active_element
+
+
+            # i'm not proud of this..
             if value_setter == 'RETURN' or value_setter == 'ENTER':
                 element.send_keys(Keys.RETURN)
             elif value_setter == 'TAB':
@@ -190,8 +209,6 @@ class WebDriverWrapper:
 
     def test_runner(self, test_to_run):       
         json_result_data = []
-        screenshot_file_name = '{}.png'.format(test_to_run.split("/")[3])
-        result_file_name = '{}.json'.format(test_to_run.split("/")[3])
         ex = None
 
         try:
