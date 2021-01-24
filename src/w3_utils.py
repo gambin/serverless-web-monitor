@@ -18,6 +18,11 @@ class W3Utils:
 
     def __init__(self):
         self._logger = logging.getLogger()
+        
+        # defining files timestamp directories
+        ts = time.gmtime()
+        self._timestamp = time.strftime("%Y%m%d", ts)
+
 
     def set_avoid(self, caller_driver, caller_wait, avoid):
         avoid_element = caller_driver.find_elements_by_css_selector(str(avoid))
@@ -90,7 +95,7 @@ class W3Utils:
             sys.exit(Errors.TEST_NOT_DEFINED)
 
 
-    def download_test_from_cloud(self, local_filename, test_to_run):
+    def download_test_from_cloud(self, local_filename, test_to_run, timestamp):
         try:
             # defining local filename       
             s3 = boto3.client("s3")
@@ -125,7 +130,7 @@ class W3Utils:
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S", ts)
             local_filename = "{}/{}.{}".format(tmp_folder, test_to_run, timestamp)
             
-            return self.download_test_from_cloud(local_filename, test_to_run)
+            return self.download_test_from_cloud(local_filename, test_to_run, timestamp)
         
         except Exception as ex:
             # Something else has gone wrong.

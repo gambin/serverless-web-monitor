@@ -19,6 +19,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from src.w3_utils import W3Utils
 from src.actions import TestActions
+from src.log_level import LogLevel
 
 class WebDriverWrapper:
 
@@ -27,8 +28,10 @@ class WebDriverWrapper:
         self._tmp_folder = "/tmp/{}".format(uuid.uuid4())
         self.download_location = download_location
 
+        # Setting logging level
         self._logger = logging.getLogger()
-        self._logger.setLevel(logging.INFO)
+        self._logger_option = LogLevel[os.environ["LOG_LEVEL"]]
+        self._logger.setLevel(self._logger_option.value)       
 
         chrome_options = webdriver.ChromeOptions()
 
@@ -196,7 +199,6 @@ class WebDriverWrapper:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
             element = self._driver.switch_to.active_element
 
-
             # i'm not proud of this..
             if value_setter == 'RETURN' or value_setter == 'ENTER':
                 element.send_keys(Keys.RETURN)
@@ -256,7 +258,6 @@ class WebDriverWrapper:
                             if(verb in TestActions.TOPRESS):
                                 self.key_press(user_value)
 
-
                         # if has selector and value
                         if (len(statement) == 5):
                             verb = statement[0].strip()
@@ -273,16 +274,15 @@ class WebDriverWrapper:
 
                             if(verb in TestActions.TOSELECT):
                                 self.set_drop_down(css_selector, user_value, to_avoid)
-                               
-                                
+
             # defining success output
             json_result_data.append({
                 "status": 200,
                 "description": "Test <{}> finished successfully".format(test_to_run)
             })
 
-            # logging info
-            if os.environ["LOG_LEVEL"] == "INFO":
+            # When loggin settings is INFO or greather
+            if int(self._logger_option.value) <= int(LogLevel.INFO.value):
                 # setting local screenshot
                 self._utils.set_screenshot(self._driver, test_to_run)
 
@@ -303,28 +303,30 @@ class WebDriverWrapper:
                 "traceback": traceback.format_exc()
             })
 
-            self._logger.error("# An exception has ocurred!")
-            self._logger.error(line_error_test)
+            self._logger.warning("# An exception has ocurred!")
+            self._logger.warning(line_error_test)
 
-            if os.environ["LOG_LEVEL"] == "INFO":
+            # When loggin settings is WARNING or greather
+            if int(self._logger_option.value) <= int(LogLevel.WARNING.value):
                 # throw full exception
-                self._logger.error("Exception: " + str(e))
+                self._logger.warning("Exception: " + str(e))
                 
                 # getting the chrome output logs
                 with open(self._tmp_folder + "/chromedriver.log", "r") as logfile:
                     log_data = logfile.readlines()
-                    self._logger.info("### Chrome error logs")
-                    self._logger.info(log_data)
+                    self._logger.warning("### Chrome error logs")
+                    self._logger.warning(log_data)
 
-                    # defining screenshot filename
-                    json_result_data[0].update({
-                        "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML"),
-                        "chrome_driver_logs": log_data
-                    })
+                    # When loggin settings is DEBUG
+                    if int(self._logger_option.value) <= int(LogLevel.DEBUG.value):
+                        # adding Chrome html output and error logs
+                        json_result_data[0].update({
+                            "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML"),
+                            "chrome_driver_logs": log_data
+                        })
                     
-                    
-            # logging error
-            if os.environ["LOG_LEVEL"] in ["INFO", "ERROR"]:
+            # When loggin settings is ERROR or greather
+            if int(self._logger_option.value) <= int(LogLevel.ERROR.value):
                 # setting local screenshot
                 self._utils.set_screenshot(self._driver, test_to_run)
 
@@ -335,7 +337,6 @@ class WebDriverWrapper:
             ex = e
 
         finally:
-    
             ## done task
             self._driver.close()
 
