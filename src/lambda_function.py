@@ -21,7 +21,7 @@ def lambda_handler(event, context, test_to_run = "template.w3swm", *args):
         driver = WebDriverWrapper()
 
         ## defining and validating the test to run
-        test_to_run_set = utils.set_test_to_run(test_to_run, driver._tmp_folder)  
+        test_to_run_set = utils.set_test_to_run(test_to_run, driver._tmp_timestamp_folder)  
 
         ## starting the test
         if test_to_run_set is not None:
