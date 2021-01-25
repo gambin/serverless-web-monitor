@@ -216,7 +216,7 @@ Basicamente as unicas variáveis de ambiente que você precisa se preocupar são
 - **BUCKET**: nome do bucket que armazenará resultados, screenshots e roteiros de teste
 - **TIME_WAIT**: tempo implicito (em segundos) que um elemento poderá ser localizado na página
 - **TIME_SLEEP**: tempo de espera (delay) para ser implementado quando desejado
-- **LOG_LEVEL**: pode ser INFO ou ERROR. Autoexplicativo.
+- **LOG_LEVEL**: pode ser CRITICAL, ERROR, WARNING, INFO ou DEBUG. Autoexplicativo.
 - **DEBUG**: TRUE ou FALSE, para habilitar o stop de remote debugging
 
 ---
@@ -429,10 +429,10 @@ The script are based on verbs, as described on the model **"template.w3swm"**, b
 
 ### Setting up EV
 
-Basicaly those are the unique EV you must care about:
+Basicaly those are the unique EV you must care about or setup by yourself:
 
 - **BUCKET**: name of the AWS bucket that will store test scripts, screenshots and results
 - **TIME_WAIT**: implicit time wait (in seconds) that an element must be located at the current page
 - **TIME_SLEEP**: delay time to be implemented anytime you want
-- **LOG_LEVEL**: INFO or ERROR. Self explanatory.
+- **LOG_LEVEL**: CRITICAL, ERROR, WARNING, INFO or DEBUG. Self explanatory.
 - **DEBUG**: TRUE or FALSE, to enable remote debug attach

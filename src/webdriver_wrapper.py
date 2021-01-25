@@ -215,8 +215,8 @@ class WebDriverWrapper:
         ex = None
 
         try:
-            # reading previously downloaded test
-            self._logger.info("Loading local downloaded test: <{}.w3swm>".format(test_to_run))
+            # reading previously downloaded test            
+            self._logger.info("Trying do open downloaded test: <{}.w3swm>".format(test_to_run))
             instructions = list(open(test_to_run, "r"))
             to_avoid = None
             to_skip = None
@@ -343,3 +343,5 @@ class WebDriverWrapper:
             # if error, raise exception on lambda execution
             if (ex):
                 raise ex
+
+            return

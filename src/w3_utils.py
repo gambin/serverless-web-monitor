@@ -10,9 +10,10 @@ import threading
 
 from threading import Timer
 from enum import Enum 
-from src.errors import Errors
+from src.errors import CustomErrors, HaltException
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from selenium.webdriver.common.by import By
+
 
 class W3Utils:
 
@@ -35,7 +36,7 @@ class W3Utils:
         for os_env in mandatory_os_env:
             if os_env not in os.environ:
                 self._logger.error("It's mandatory to define [{}] environment variable".format(os_env))
-                sys.exit(Errors.OS_ENV_NOT_DEFINED)
+                return
         
         self._logger.info("### ENVIRONMENT VARIABLES")
         self._logger.info(os.environ)
@@ -84,15 +85,15 @@ class W3Utils:
     def check_debug(self):
         if os.environ["DEBUG"] == "TRUE":
             ptvsd.enable_attach(address=('0.0.0.0', int(os.environ["DEBUG_PORT"])), redirect_output=True)
-            print("Debugger waiting to be attached on port {}".format(int(os.environ["DEBUG_PORT"])))
+            print(" *** Debugger waiting to be attached on port {}".format(int(os.environ["DEBUG_PORT"])))
             ptvsd.wait_for_attach()
-            print("Debugger attached bro!")
+            print(" *** Debugger attached bro!")
 
 
     def check_test_availability(self, test_to_run):
         if (test_to_run is None or test_to_run == ""):
             self._logger.error("It's mandatory to set the test to run.")
-            sys.exit(Errors.TEST_NOT_DEFINED)
+            return 
 
 
     def download_test_from_cloud(self, local_filename, test_to_run, timestamp):
@@ -103,21 +104,21 @@ class W3Utils:
             result = file_content["Body"].read()
             with open(local_filename, "wb") as file:
                 file.write(result)
-            return local_filename     
+            return local_filename
 
         except botocore.exceptions.ClientError as ex:
             if (ex.response["Error"]["Code"] == "404" or ex.response["Error"]["Code"] == 'NoSuchKey'):
                 self._logger.error("The test you've informed [{}] doesn't exists on [{}] folder under [{}] bucket!".format(test_to_run, 'tests', os.environ["BUCKET"]))
-                sys.exit(Errors.TEST_NOT_FOUND)
+                return 
             else:
                 # Something else has gone wrong.
                 self._logger.error("General exception: {}".format(str(ex)))
-                sys.exit(Errors.GENERIC_EXCEPTION)
+                return 
 
         except Exception as ex:
             # Something else has gone wrong.
             self._logger.error("General exception: {}".format(str(ex)))
-            sys.exit(Errors.GENERIC_EXCEPTION)   
+            raise HaltException("Finishing the code")
 
 
     def set_test_to_run(self, test_to_run, tmp_folder):
@@ -129,10 +130,10 @@ class W3Utils:
             ts = time.gmtime()
             timestamp = time.strftime("%Y-%m-%d_%H-%M-%S", ts)
             local_filename = "{}/{}.{}".format(tmp_folder, test_to_run, timestamp)
-            
+
             return self.download_test_from_cloud(local_filename, test_to_run, timestamp)
         
         except Exception as ex:
             # Something else has gone wrong.
             self._logger.error("General exception: {}".format(str(ex)))
-            sys.exit(Errors.GENERIC_EXCEPTION)
+            raise HaltException("Finishing the code")
