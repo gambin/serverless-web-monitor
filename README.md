@@ -257,9 +257,9 @@ This solution comprehends the following scenario:
 - Implements a AWS Lambda that runs tests scripts to run scheduled or on-demand (AWS Cloudwatch Rules [crontab alike], manual, whatever);
 - When invocated, this lambda reads a script (text file wroted in pt-br, I'm working to support en-us, please don't bite me) like a test script. Example:
 ```sh
-    Acessar "https://www.mydomain.com"
-    Preencher "#choose-your-css2-selector" com "heres my field value bro!"
-    Clicar ".my-custom-submit-button"
+    Access "https://www.mydomain.com"
+    Fill "#choose-your-css2-selector" with "heres my field value bro!"
+    Click ".my-custom-submit-button"
 ````
 - If there's no exception (timeout, element not available, any kind of) so it's done! If you want you may write the result output and the screenshot in a AWS Bucket;
 - If there's any exception, it'll write the result and the screenshot in a AWS Bucket;
@@ -404,26 +404,26 @@ $ make build-lambda-package
 The script are based on verbs, as described on the model **"template.w3swm"**, but you may understand it like:
 
 - Single parameters statements:
-    - **Esperar** (to wait): implements a timesleep according to the value (int) informed next to it. Time in seconds.
-    - **Evitar** (to avoid): since declared it must avoid any **NEW** element that may sunrise in front your screen temporaly, like a loading modal. It's intended to be used when you have some transition elements, or animation, or any AJAX or delay that may improperly break the interation with the next element on script. It's also a good option for client side events, like onclick, onchange, onblur, etc. The waitint time to avoid is defined by the *"TIME_WAIT"* EV.
-    - **Acessar** (to get): the classic GET URL! Just type the URL you want and voilà. There's something interesting here that you may want to use it like a "fake SSO" - for example - you just want to access some protected page that you must send a auth cookie, session info, localstorage, anything that sits on client side. So if you goes to the login page, do login and then access the URL want it's going to work normally, because all the session runs at the same context, like a native browser interaction! You don't need to handle headers, cookies, any sort of that. Just browse, my friend!
-    - **Clicar** (to click): may be a button, radio button, anything clickabled.
-    - **Pressionar** (to press): simulates to press a key considering the last element you interacted with. For now just supports **"ENTER"** and **"TAB"**. I really need to improve this.
+    - **Wait** (to wait): implements a timesleep according to the value (int) informed next to it. Time in seconds.
+    - **Avoid** (to avoid): since declared it must avoid any **NEW** element that may sunrise in front your screen temporaly, like a loading modal. It's intended to be used when you have some transition elements, or animation, or any AJAX or delay that may improperly break the interation with the next element on script. It's also a good option for client side events, like onclick, onchange, onblur, etc. The waitint time to avoid is defined by the *"TIME_WAIT"* EV.
+    - **Access** (to get): the classic GET URL! Just type the URL you want and voilà. There's something interesting here that you may want to use it like a "fake SSO" - for example - you just want to access some protected page that you must send a auth cookie, session info, localstorage, anything that sits on client side. So if you goes to the login page, do login and then access the URL want it's going to work normally, because all the session runs at the same context, like a native browser interaction! You don't need to handle headers, cookies, any sort of that. Just browse, my friend!
+    - **Click** (to click): may be a button, radio button, anything clickabled.
+    - **Press** (to press): simulates to press a key considering the last element you interacted with. For now just supports **"ENTER"** and **"TAB"**. I really need to improve this.
 
 - Double parameters statements:
-    - **Preencher** (to fill): use it to fill up an input text. If you add a "com delay" at the end of statement, you're adding a timesleep accordingly to the EV *"TIME_SLEEP"*
-    - **Selecionar** (to select): must use to fill dropdowns. Important: you must set the display value, not the internal value.
+    - **Fill** (to fill): use it to fill up an input text. If you add a "com delay" at the end of statement, you're adding a timesleep accordingly to the EV *"TIME_SLEEP"*
+    - **Select** (to select): must use to fill dropdowns. Important: you must set the display value, not the internal value.
     
 - Examples
 ```sh
-    Evitar ".classe-modal-loading"
-    Acessar "https://www.meusite.com"
-    Esperar 5
-    Pressionar "TAB"
-    Clicar "#button-submit"
-    Preencher ".user-inpunt" com "username@domain.com"
-    Preencher ".user-password" com "my-secret-pass_123" com delay
-    Selecionar ".dropdown-field" com "I really liked this project!"
+    Avoid ".classe-modal-loading"
+    Access "https://www.meusite.com"
+    Wait 5
+    Press "TAB"
+    Click "#button-submit"
+    Fill ".user-inpunt" with "username@domain.com"
+    Fill ".user-password" with "my-secret-pass_123" com delay
+    Select ".dropdown-field" with "I really liked this project!"
 ```
 
 

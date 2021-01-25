@@ -7,3 +7,4 @@ class TestActions:
     TOPRESS = ('Pressionar', 'Press')
     TOFILL = ('Preencher', 'Fill')
     TOSELECT = ('Selecionar', 'Select')
+    DELAY = ('com delay', 'with delay')
