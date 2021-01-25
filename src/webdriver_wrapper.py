@@ -343,5 +343,3 @@ class WebDriverWrapper:
             # if error, raise exception on lambda execution
             if (ex):
                 raise ex
-
-            return
