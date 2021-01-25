@@ -9,7 +9,7 @@ services:
       - BUCKET=monitoracao-w3do
       - TIME_WAIT=10
       - TIME_SLEEP=3
-      - LOG_LEVEL=ERROR
+      - LOG_LEVEL=INFO
       - DEBUG=TRUE
       - DEBUG_PORT=15678
       - AWS_REGION=us-east-1
@@ -17,4 +17,3 @@ services:
     volumes:
       - ./src/:/var/task/src/
       - $HOME/.aws/:/root/.aws/
-      

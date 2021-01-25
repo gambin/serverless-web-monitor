@@ -18,6 +18,8 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support import expected_conditions as ExpectedConditions
 from src.w3_utils import W3Utils
+from src.actions import TestActions
+from src.log_level import LogLevel
 
 class WebDriverWrapper:
 
@@ -26,8 +28,10 @@ class WebDriverWrapper:
         self._tmp_folder = "/tmp/{}".format(uuid.uuid4())
         self.download_location = download_location
 
+        # Setting logging level
         self._logger = logging.getLogger()
-        self._logger.setLevel(logging.INFO)
+        self._logger_option = LogLevel[os.environ["LOG_LEVEL"]]
+        self._logger.setLevel(self._logger_option.value)       
 
         chrome_options = webdriver.ChromeOptions()
 
@@ -82,7 +86,8 @@ class WebDriverWrapper:
 
         if self.download_location:
             self.enable_download_in_headless_chrome()
-    
+
+
     def close(self):
         # Close webdriver connection
         self._driver.quit()
@@ -99,6 +104,7 @@ class WebDriverWrapper:
                     os.unlink(file_path)
             except Exception as e:
                 print(e)
+
 
     def enable_download_in_headless_chrome(self):
         """
@@ -128,22 +134,28 @@ class WebDriverWrapper:
 
     def set_text_input(self, selector, value_setter, to_avoid=None, ts=0):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
 
+            # check if there's a pre-defined timesleep
             if int(ts) > 0:
                 time.sleep(int(ts))
 
+            # getting the element
             element = self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
             
             # element.clear() would be awesome, but not working properly on some sites..
             element.send_keys(Keys.CONTROL + "a")
 
+            # to be implemented, happy to working with python, not with Go-Lang LOL
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
 
+            # settings the values to selector
             element.send_keys(value_setter)
 
+            # i don't want to waste my time to care about client side actions like on blur, on change, so...
             self.key_press("TAB")
             self.key_press("SHIFT+TAB", to_avoid)
 
@@ -153,28 +165,41 @@ class WebDriverWrapper:
     
     def button_click(self, selector, to_avoid=None):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
+
+            # is there a way to assure that the element is ready to interact with? this way..
             self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector)))
             element = self._wait.until(ExpectedConditions.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            
+            # and go!
             element.click()
         except: 
             raise
 
+
     def set_drop_down(self, selector, value_setter, to_avoid=None):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
+
+            # is there a way to assure that the element is ready to interact with? this way..
             element = Select(self._wait.until(ExpectedConditions.visibility_of_element_located((By.CSS_SELECTOR, selector))))
             element.select_by_visible_text(value_setter)
         except: 
             raise
 
+
     def key_press(self, value_setter, to_avoid=None):
         try:
+            # check if need to avoid some selector, like a modal or loading element overlaping on z-index
             if to_avoid is not None:
                 self._utils.set_avoid(self._driver, self._wait, to_avoid)
             element = self._driver.switch_to.active_element
+
+            # i'm not proud of this..
             if value_setter == 'RETURN' or value_setter == 'ENTER':
                 element.send_keys(Keys.RETURN)
             elif value_setter == 'TAB':
@@ -183,16 +208,15 @@ class WebDriverWrapper:
                 element.send_keys(Keys.SHIFT, Keys.TAB)
         except: 
             raise
-    
+
+
     def test_runner(self, test_to_run):       
         json_result_data = []
-        screenshot_file_name = '{}.png'.format(test_to_run.split("/")[3])
-        result_file_name = '{}.json'.format(test_to_run.split("/")[3])
         ex = None
 
         try:
-            # reading previously downloaded test
-            self._logger.info("Loading local downloaded test: <{}.w3swm>".format(test_to_run))
+            # reading previously downloaded test            
+            self._logger.info("Trying do open downloaded test: <{}.w3swm>".format(test_to_run))
             instructions = list(open(test_to_run, "r"))
             to_avoid = None
             to_skip = None
@@ -214,31 +238,25 @@ class WebDriverWrapper:
                             verb = statement[0].strip()
                             user_value = statement[1].strip()
 
-                            ## Esperar (to wait)
-                            ## Evitar (to avoid)
-                            ## Acessar (to get)
-                            ## Clicar (to click)
-                            ## Ignorar (to skip)
                             self._logger.info("Action: <{}>. Value: <{}>.".format(verb, user_value))
 
-                            if(verb == "Esperar"):
+                            if(verb in TestActions.TOWAIT):
                                 time.sleep(int(user_value))
                             
-                            if(verb == "Evitar"):
+                            if(verb in TestActions.TOAVOID):
                                 to_avoid = user_value
 
-                            if(verb == "Acessar"):
+                            if(verb in TestActions.TOACCESS):
                                 self._driver.get(user_value)
 
-                            if(verb == "Clicar"):
+                            if(verb in TestActions.TOCLICK):
                                 self.button_click(user_value, to_avoid)
 
-                            if(verb == "Ignorar"):
+                            if(verb in TestActions.TOIGNORE):
                                 to_skip = user_value
 
-                            if(verb == "Pressionar"):
+                            if(verb in TestActions.TOPRESS):
                                 self.key_press(user_value)
-
 
                         # if has selector and value
                         if (len(statement) == 5):
@@ -246,17 +264,15 @@ class WebDriverWrapper:
                             css_selector = statement[1].strip()
                             user_value = statement[3].strip()
 
-                            ## Preencher (to fill)
-                            ## Selecionar (to select)
                             self._logger.info("Action: <{}>. Selector: <{}>. Value: <{}>.".format(verb, css_selector, user_value))
 
-                            if (verb == "Preencher"):
+                            if (verb in TestActions.TOFILL):
                                 if (line.strip().endswith("com delay")):
                                     self.set_text_input(css_selector, user_value, to_avoid, ts=os.environ["TIME_SLEEP"])
                                 else :    
                                     self.set_text_input(css_selector, user_value, to_avoid)
 
-                            if(verb == "Selecionar"):
+                            if(verb in TestActions.TOSELECT):
                                 self.set_drop_down(css_selector, user_value, to_avoid)
 
             # defining success output
@@ -265,8 +281,8 @@ class WebDriverWrapper:
                 "description": "Test <{}> finished successfully".format(test_to_run)
             })
 
-            # logging info
-            if os.environ["LOG_LEVEL"] == "INFO":
+            # When loggin settings is INFO or greather
+            if int(self._logger_option.value) <= int(LogLevel.INFO.value):
                 # setting local screenshot
                 self._utils.set_screenshot(self._driver, test_to_run)
 
@@ -287,28 +303,30 @@ class WebDriverWrapper:
                 "traceback": traceback.format_exc()
             })
 
-            self._logger.error("# An exception has ocurred!")
-            self._logger.error(line_error_test)
+            self._logger.warning("# An exception has ocurred!")
+            self._logger.warning(line_error_test)
 
-            if os.environ["LOG_LEVEL"] == "INFO":
+            # When loggin settings is WARNING or greather
+            if int(self._logger_option.value) <= int(LogLevel.WARNING.value):
                 # throw full exception
-                self._logger.error("Exception: " + str(e))
+                self._logger.warning("Exception: " + str(e))
                 
                 # getting the chrome output logs
                 with open(self._tmp_folder + "/chromedriver.log", "r") as logfile:
                     log_data = logfile.readlines()
-                    self._logger.info("### Chrome error logs")
-                    self._logger.info(log_data)
+                    self._logger.warning("### Chrome error logs")
+                    self._logger.warning(log_data)
 
-                    # defining screenshot filename
-                    json_result_data[0].update({
-                        "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML"),
-                        "chrome_driver_logs": log_data
-                    })
+                    # When loggin settings is DEBUG
+                    if int(self._logger_option.value) <= int(LogLevel.DEBUG.value):
+                        # adding Chrome html output and error logs
+                        json_result_data[0].update({
+                            "htmlOutput": self._driver.find_element_by_tag_name("html").get_attribute("innerHTML"),
+                            "chrome_driver_logs": log_data
+                        })
                     
-                    
-            # logging error
-            if os.environ["LOG_LEVEL"] in ["INFO", "ERROR"]:
+            # When loggin settings is ERROR or greather
+            if int(self._logger_option.value) <= int(LogLevel.ERROR.value):
                 # setting local screenshot
                 self._utils.set_screenshot(self._driver, test_to_run)
 
@@ -319,11 +337,11 @@ class WebDriverWrapper:
             ex = e
 
         finally:
-    
             ## done task
             self._driver.close()
 
             # if error, raise exception on lambda execution
             if (ex):
                 raise ex
-            
+
+            return

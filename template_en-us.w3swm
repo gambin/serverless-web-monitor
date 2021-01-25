@@ -1,0 +1,7 @@
+Access "https://bing.com"
+Fill "input[name='q']" with "github gambin"
+Press "ENTER"
+Click "#b_results a"
+Click "a[href*='repositories']"
+Click "a[href*='serverless-web-monitor']"
+Fill ".header-search-input" with "Thanks for your visit!"
