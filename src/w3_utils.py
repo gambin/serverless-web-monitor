@@ -18,10 +18,13 @@ from selenium.webdriver.common.by import By
 class W3Utils:
 
     def __init__(self):
+        # Starting log
         self._logger = logging.getLogger()
 
-        # definig file path
+        # Initiating some file paths
         self._test_local_path = None
+        self._screenshot_file_path = None
+        self._result_file_path = None
 
 
     def set_avoid(self, caller_driver, caller_wait, avoid):
