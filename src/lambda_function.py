@@ -7,11 +7,11 @@ def lambda_handler(event, context, test_to_run = "template.w3swm", *args):
     try:
         ## starting some base checkings
         utils = W3Utils()
+        utils.check_os_env()
 
         # debug will starts here
         utils.check_debug()
-        utils.check_os_env()
-
+        
         ## check if there's a brand new test defined
         ## or must used the predefined template
         if event.get("test_to_run"):
