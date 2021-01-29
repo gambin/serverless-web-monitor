@@ -1,4 +1,5 @@
 import os
+import sys
 from src.webdriver_wrapper import WebDriverWrapper
 from src.w3_utils import W3Utils
 from src.errors import HaltException
@@ -30,5 +31,5 @@ def lambda_handler(event, context, test_to_run = "template.w3swm", *args):
         ## quit
         return
 
-    except HaltException:
-        return
+    except:
+        sys.exit(1)
