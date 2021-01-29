@@ -8,6 +8,7 @@ import logging
 import sys
 import traceback
 import json
+import watchtower
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -343,7 +344,8 @@ class WebDriverWrapper:
             self._utils.upload_to_aws()
 
             # Result
-            print(json_result_data)
+            self._logger.addHandler(watchtower.CloudWatchLogHandler())
+            self._logger.critical(json_result_data)
 
             # Done task
             self._driver.close()
