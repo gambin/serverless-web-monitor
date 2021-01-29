@@ -3,3 +3,4 @@ chromedriver-binary==2.42
 boto3
 logger
 ptvsd==4.3.2
+watchtower

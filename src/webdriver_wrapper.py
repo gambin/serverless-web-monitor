@@ -7,6 +7,8 @@ import json
 import logging
 import sys
 import traceback
+import json
+import watchtower
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -291,14 +293,6 @@ class WebDriverWrapper:
                 "description": "Test <{}> finished successfully".format(test_to_run)
             })
 
-            # When loggin settings is INFO or greather
-            if int(self._logger_option.value) <= int(LogLevel.INFO.value):
-                # setting local screenshot
-                self._utils.set_screenshot(self._driver, test_to_run)
-
-                # setting local JSON
-                self._utils.set_json_output(json_result_data, test_to_run)
-
             # Job done!
             self._logger.info("Well done!")
 
@@ -335,20 +329,23 @@ class WebDriverWrapper:
                             "chrome_driver_logs": log_data
                         })
                     
-            # When loggin settings is ERROR or greather
-            if int(self._logger_option.value) <= int(LogLevel.ERROR.value):
-                # Setting local screenshot
-                self._utils.set_screenshot(self._driver, test_to_run)
-
-                # Setting local JSON
-                self._utils.set_json_output(json_result_data, test_to_run)
-
             # Setting error exception to raise on lambda execution
             ex = e
 
         finally:
+
+            # setting local screenshot
+            self._utils.set_screenshot(self._driver, test_to_run)
+
+            # setting local JSON
+            self._utils.set_json_output(json_result_data, test_to_run)
+
             # Uploading results to AWS
             self._utils.upload_to_aws()
+
+            # Result
+            self._logger.addHandler(watchtower.CloudWatchLogHandler())
+            self._logger.critical(json_result_data)
 
             # Done task
             self._driver.close()

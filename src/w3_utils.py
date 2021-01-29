@@ -18,10 +18,14 @@ from selenium.webdriver.common.by import By
 class W3Utils:
 
     def __init__(self):
+        # Starting log
         self._logger = logging.getLogger()
 
-        # definig file path
+        # Initiating some file paths
         self._test_local_path = None
+        self._screenshot_file_path = None
+        self._screenshot_file_name = None
+        self._result_file_path = None
 
 
     def set_avoid(self, caller_driver, caller_wait, avoid):
@@ -56,12 +60,12 @@ class W3Utils:
         # setting some path variables
         self._result_file_path = "{}.json".format(test_to_run)
         
-        # Appending data to json object
-        screenshot_file_name = "{}/{}.png".format(self._screenshot_file_path.split("/")[4],self._screenshot_file_path.split("/")[3])
+        # I'm not a RegEx big fan, but this parse sucks...
+        self._screenshot_file_name = "{}/{}/UTC0-{}.png".format((self._screenshot_file_path.split("/")[4]).split(".png")[0],(self._screenshot_file_path.split("/")[3])[:10],(self._screenshot_file_path.split("/")[3]).split("_")[1])
 
         # Setting screenshot filename
         json_result_data[0].update({
-            "screenshot": screenshot_file_name
+            "screenshot": self._screenshot_file_name
         })
         
         # Setting json temp file and structure
@@ -71,17 +75,17 @@ class W3Utils:
 
     def upload_to_aws(self):
         try:
-            # I'm not a RegEx big fan, but this parse sucks...
-            screenshot_file_name = "{}/{}/UTC0-{}.png".format((self._screenshot_file_path.split("/")[4]).split(".png")[0],(self._screenshot_file_path.split("/")[3])[:10],(self._screenshot_file_path.split("/")[3]).split("_")[1])
-            result_file_name = screenshot_file_name.replace(".png",".json")
+            # Not proud of this but..
+            result_file_name = self._screenshot_file_name.replace(".png",".json")
             last_result_filename = "{}_last-run".format(self._screenshot_file_path.split("/")[4].replace(".png",".json"))
             
             # Uploading to AWS
             s3 = boto3.client("s3")
-            s3.upload_file(self._screenshot_file_path, os.environ["BUCKET"], "screenshots/{}".format(screenshot_file_name))
+            s3.upload_file(self._screenshot_file_path, os.environ["BUCKET"], "screenshots/{}".format(self._screenshot_file_name))
             s3.upload_file(self._result_file_path, os.environ["BUCKET"], "results/{}".format(result_file_name))
             s3.upload_file(self._result_file_path, os.environ["BUCKET"], "results/{}".format(last_result_filename))
-            self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(screenshot_file_name, result_file_name, os.environ["BUCKET"]))
+            self._logger.info("Screenshot <{}.png> and result <{}.json> uploaded successfully to <{}> bucket".format(self._screenshot_file_name, result_file_name, os.environ["BUCKET"]))
+        
         except Exception as ex:
             # Something else has gone wrong.
             self._logger.error("General exception: {}".format(str(ex)))
