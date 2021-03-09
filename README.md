@@ -8,7 +8,15 @@ Flag images source: https://www.iconarchive.com/show/world-cup-2014-teams-icons-
 
 ## pt-br
 
-Resumo: - solução de automação de testes regressivos agendados capaz de rodar em tecnologias serverless por meio de roteiros escritos em linguagem natural publicados em soluções de armazenamento cloud.
+Resumo: - solução de automação de testes regressivos agendados capaz de rodar em tecnologias serverless por meio de roteiros escritos em linguagem natural publicados em soluções de armazenamento cloud, que incluem requisitos de monitoração e observabilidade.
+
+
+### Quero usar agora!
+
+Baixe agora mesmo o pack com pacote pronto para subir no seu AWS Lambda na página de releases: https://github.com/gambin/serverless-web-monitor/releases
+
+
+### Onde tudo começou
 
 Essa solução foi inspirada em https://github.com/vittorio-nardone/selenium-chromium-lambda
 
@@ -19,7 +27,7 @@ Que por sua vez é uma implementação de https://github.com/adieuadieu/serverle
 Ou seja - ninguém inventou a roda por aqui.
 
 
-Acontece que qualquer implementação de roteiros de teste com selenium é um pouco chato na definição de versão de drivers (chromedriver que o diga), browser (chrome/ chromium que o diga), selenium driver, plataforma, timeouts/ timewaits/ timesleeps, e todo aquele universo que a gente já sabe. E para quem usa muito esporadicamente (não tem ninguém de QA e afins por aqui), criar um do zero ou ficar reciclando roteiros de testes existentes é um pouco chato.
+Acontece que qualquer implementação de roteiros de teste com selenium é um pouco chato na definição de versão de drivers (chromedriver que o diga), browser (chrome/ chromium que o diga), selenium driver, plataforma, timeouts/ timewaits/ timesleeps, e todo aquele universo que a gente já sabe. E para quem usa muito esporadicamente (não tem ninguém de QA e afins por aqui), criar um do zero ou ficar reciclando códigos ou roteiros de testes existentes é um pouco chato.
 
 Para acabar (ou minimizar) essa dor de cabeça com uma possibilidade de automação + redução de custos top (serverless, my friend), criei esse carinha aqui.
 
@@ -55,6 +63,7 @@ A solução basicamente compreende o seguinte cenário:
 - Não há necessidade de conhecimento técnico para criação de novos roteiros (apenas de seletor CSS, seu browser ajuda vai);
 - Se você não pretende usar um cenário on-premises já disponível, é um forte candidato a solução com menor custo possível para o que se propõe;
 
+
 ### Screenshots
 
 ![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/s3_folders.png)
@@ -68,13 +77,8 @@ A solução basicamente compreende o seguinte cenário:
 ![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/template.w3swm.2020-10-16_22-36-55.png)
 
 
-### Quero usar agora!
 
-Baixe agora mesmo o pack com pacote pronto para subir no seu AWS Lambda na página de releases: https://github.com/gambin/serverless-web-monitor/releases
-
-
-
-### Requisitos
+### _DIY momentum_
 
 Esse cara roda em docker, mas foi feito pra AWS Lambda. Choose your path, padawan.
 Para rodar em docker e buildar o pacote para Lambda você irá precisar de:
@@ -223,7 +227,15 @@ Basicamente as unicas variáveis de ambiente que você precisa se preocupar são
 
 ## en-us
 
-Abstract: solution to automate regression test to run scheduled and compatible with serverless technologies, trough publish of natural language scripts on a cloudable storage solutions.
+Abstract: solution to automate regression tests to run scheduled on serverless technologies, by interpreting natural languages scripts storaged on cloud solution, fully compatible with monitoring and observability requirements.
+
+
+### Want to use it now!
+
+Please download one of our releases to run RIGHT NOW on your AWS Lambda: https://github.com/gambin/serverless-web-monitor/releases
+
+
+### Where it all began
 
 This solution was inspired by https://github.com/vittorio-nardone/selenium-chromium-lambda
 
@@ -254,8 +266,8 @@ Please enjoy, ask, find bugs (and report them!), and if you can, commit and help
 
 This solution comprehends the following scenario:
 
-- Implements a AWS Lambda that runs tests scripts to run scheduled or on-demand (AWS Cloudwatch Rules [crontab alike], manual, whatever);
-- When invocated, this lambda reads a script (text file wroted in pt-br, I'm working to support en-us, please don't bite me) like a test script. Example:
+- Implements a AWS Lambda that runs test scripts to run scheduled or on-demand (AWS Cloudwatch Rules [crontab alike], manual, whatever);
+- When invocated, this lambda reads a script (text file wroted in pt-br or en-us) like a test script. Example:
 ```sh
     Access "https://www.mydomain.com"
     Fill "#choose-your-css2-selector" with "heres my field value bro!"
@@ -289,12 +301,8 @@ This solution comprehends the following scenario:
 ![](http://tarcisiogambin.net/wp-content/uploads/sites/2/2020/10/template.w3swm.2020-10-16_22-36-55.png)
 
 
-### Want to use it now!
 
-Please download one of our releases to run RIGHT NOW on your AWS Lambda: https://github.com/gambin/serverless-web-monitor/releases
-
-
-### Requirements
+### DIY
 
 It runs on docker, but it's made to run on AWS Lambda. Choose your path, padawan.
 To run on docker and build it to run on Lambda you'll need:
